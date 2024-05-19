@@ -16,6 +16,14 @@ There are multiple variations of MCTS, so we will examine these one by one.
 
 ## Pseudocode
 Selection, Expansion, Simulation, Backpropogation
+There are two fundamental parts to the MCTS algorithm. The first part is understanding how the algorithm actually simulates future moves, and then uses those simulations to make good decisions. The process for this is Selection, Expansion, Simulation, and Backpropogation. The following image will be helpful in understanding:
+
+![image](https://github.com/Snicoalot/DSOR651-AlgorithmProject/assets/144690537/74c948d4-4cb5-4876-823a-50a8a4912838)
+
+In the Selection phase, the algorithm chooses a non-leaf node, and passes it to the Expansion function. In the Expansion phase, the algorithm creates a new child node for each **immediately** possible move. For example, lets say we were working with a blank tic tac toe board, the expansion algorithm would create 9 child nodes, each with the ***X*** symbol in one of the 9 grid squares. It would then pass those children on to the Simulation phase. The Simulation phase takes each child node and plays a random game until terminating. Once a simulated game is completed, it is "backed up" in the Backpropogation phase, which adjusts the statistic of each prior node to allow the algorithm to make an "intelligent" choice on where to play next.
+
+The full psuedocode is here:
+
 ![image](https://github.com/Snicoalot/DSOR651-AlgorithmProject/assets/144690537/d3c3fdce-da77-43f2-b92d-72df8e92f572)
 
 ## Example code to import and use module
