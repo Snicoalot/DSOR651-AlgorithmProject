@@ -16,6 +16,7 @@ There are multiple variations of MCTS, so we will examine these one by one.
 
 ## Pseudocode
 Selection, Expansion, Simulation, Backpropogation
+![image](https://github.com/Snicoalot/DSOR651-AlgorithmProject/assets/144690537/d3c3fdce-da77-43f2-b92d-72df8e92f572)
 
 ## Example code to import and use module
 
