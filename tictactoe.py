@@ -1,6 +1,5 @@
 '''
-This file contains the main code for tic tac toe .
-Hooray! Successfully set up!
+This file contains the main code for tic tac toe.
 '''
 
 # Load necessary libraries
@@ -42,28 +41,74 @@ def checkWin(board, player):
 
 
 def playGame():
+    # Intialize a new game and have the user select singleplayer or two player gamemode
     board = [0] * 9
     players = [1, -1]
-    while True:
-        for player in players:
-            printBoard(board)
-            if player == 1:
-                move = getMove(board)
-                print(f"Player 1 chooses to move to {move}:")
-                board[move] = player
-            else:
-                # TODO: Change to MCTS algorithm taking a turn
-                move = getMove(board)
-                print(f"Player 2 chooses to move to {move}:")
-                board[move] = player
-            if checkWin(board, player):
+    print(f"Would you like to play 1 or 2 player tic tac toe? (enter 1 or 2): ")
+    gamemode = 0
+    while gamemode == 0:
+        game = input("")
+        # Will not accept non-integer numbers, or numbers in illegal placements
+        try:
+            game = int(game)
+            if isinstance(game, int):
+                if game == 1 or game == 2:
+                    gamemode = chooseGame(game)
+                else:
+                    print("Invalid choice. Try again.")
+        except:  
+            print("Invalid choice. Try again.")
+
+    # Code for singleplayer gamemode (MCTS)
+    if gamemode == 1:
+        while True:
+            for player in players:
                 printBoard(board)
-                print(f"Player {'1' if player == 1 else '2'} wins the game!")
-                return
-            if 0 not in board:
+                if player == 1:
+                    move = getMove(board)
+                    print(f"Player 1 chooses to move to {move}:")
+                    board[move] = player
+                else:
+                    # TODO: Change to MCTS algorithm taking a turn
+                    move = getMove(board)
+                    print(f"Player 2 chooses to move to {move}:")
+                    board[move] = player
+                if checkWin(board, player):
+                    printBoard(board)
+                    print(f"Player {'1' if player == 1 else '2'} wins the game!")
+                    return
+                if 0 not in board:
+                    printBoard(board)
+                    print("It's a tie!")
+                    return
+
+    # Code for two player gamemode (classic)
+    elif gamemode == 2:
+        while True:
+            for player in players:
                 printBoard(board)
-                print("It's a tie!")
-                return
+                if player == 1:
+                    move = getMove(board)
+                    print(f"Player 1 chooses to move to {move}:")
+                    board[move] = player
+                else:
+                    move = getMove(board)
+                    print(f"Player 2 chooses to move to {move}:")
+                    board[move] = player
+                if checkWin(board, player):
+                    printBoard(board)
+                    print(f"Player {'1' if player == 1 else '2'} wins the game!")
+                    return
+                if 0 not in board:
+                    printBoard(board)
+                    print("It's a tie!")
+                    return
+
+def chooseGame(gamemode):
+    if gamemode == 1:
+        return 1
+    else:
+        return 2
 
 def getMove(board):
     # Get a valid move from a user
@@ -76,18 +121,15 @@ def getMove(board):
             if isinstance(move, int):
                 if 0 <= move <= 8 and board[move] == 0:
                     return move
+                else:
+                    print("Invalid move. Try again.")
         except:  
             print("Invalid move. Try again.")
 
 def printBoard(board):
     # Print the board
-    # TODO: This is so broken
-    for i in range(3):
-        print(f" {' '.join(['X' if board[i] == 1 else ('O' if board[i] == -1 else '_')])}")
-    for i in range(3, 6):
-        print(f" {' '.join(['X' if board[i] == 1 else ('O' if board[i] == -1 else '_')])}")
-    for i in range(6, 9):
-        print(f" {' '.join(['X' if board[i] == 1 else ('O' if board[i] == -1 else '_')])}")
+    for i in range(0, 9, 3):
+        print(f" {' '.join(['X' if board[j] == 1 else ('O' if board[j] == -1 else '_') for j in range(i, i+3)])}")
     print("\n")
 
 if __name__ == "__main__":
