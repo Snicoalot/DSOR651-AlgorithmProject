@@ -64,3 +64,6 @@ Such as new code snippets to support some computations
 ## Unit-testing strategy
 What steps of the algorithm were tested individually?
 Code-coverage measurement
+
+## Documentation
+All code here was produced by 2d Lt Nico De Ros without the use of external aid. Code examples from a variety of websites to include online journals, YouTube videos, and wikipedias were used, in addition to code previously created for other purposes (specifically unit testing from Databases and the Class and Node system from USAFA CS220). The source, https://repository.essex.ac.uk/4117/1/MCTS-Survey.pdf, was foundational to understanding this material.
