@@ -34,12 +34,6 @@ There are two fundamental parts to the MCTS algorithm. The first part is underst
 
 In the Selection phase, the algorithm chooses a non-leaf node, and passes it to the Expansion function. In the Expansion phase, the algorithm creates a new child node for each **immediately** possible move. For example, lets say we were working with a blank tic tac toe board, the expansion algorithm would create 9 child nodes, each with the ***X*** symbol in one of the 9 grid squares. It would then pass those children on to the Simulation phase. The Simulation phase takes each child node and plays a random game until terminating. Once a simulated game is completed, it is "backed up" in the Backpropogation phase, which adjusts the statistic of each prior node to allow the algorithm to make an "intelligent" choice on where to play next.
 
-An example iteration is provided here:
-
-![image](https://github.com/Snicoalot/DSOR651-AlgorithmProject/assets/144690537/bd5e03ef-08e3-4f12-8b3f-e55e66411d49)
-
-From the image, we see some two player game (white nodes represent player 1, and gray nodes represent player 2) unfolding. In each node, we see a fraction where the numerator is the number of games won from that point moving forward and the denominator is the number of games *simulated* from that point forward. On the far left, under Selection, we see a bolded path from the root node to a gray leaf node with a 3/3 in it (again, meaning 3 games have been simulated from this node and that player 2 won each of those 3 games). The picture moves forward into an expansion, and creates a white node with a 0/0. This means this *would* be player 1's turn, but 0 games have been simulated or won from this point forward. The algorithm continues on to Simulation, where a nondescript number of games took place with random moves resulting in a loss for player 1 (shown by the 0/1). This is then backpropogated up the tree, updating the simulated results for all nodes in the path. Thus, all nodes in the path receive an increment in their demonitaor (for one extra simulation), and **only** the nodes in the path corresponding to player 2 (gray) receive an increment in their numerator (for one extra win). This iterative process takes place until a predefined ending criteria is met.
-
 The full psuedocode is here:
 
 ![image](https://github.com/Snicoalot/DSOR651-AlgorithmProject/assets/144690537/d3c3fdce-da77-43f2-b92d-72df8e92f572)
@@ -47,13 +41,18 @@ The full psuedocode is here:
 A root node is created, and while a predefined ending criteria is not yet met, the algorithm performs a selection, expansion, and backpropogation. Once the ending criteria is met, it selects the child node with the best probability of leading to a winning gamestate and makes that move. Rinse and repeat until gameover!
 
 ## Example code to import and use module
-Just running the tictactoe.py ?
+Screenshots of actual code and explanation of how it works.
 
 ## Visualization or animation of algorithm steps or results
 To get a better idea on how MCTS works, watch these two video clips!
 https://youtube.com/clip/UgkxcLUTgE6jOOiOC8taLX54co23UHLOlci7?si=ZZ2-CMyxJMwW0I09
 https://youtube.com/clip/Ugkxe_k9BzKlb-T77BCq5N2m620UfasHR_G1?si=LRiWVclOpuVhw7K_
 
+An example iteration is provided here:
+
+![image](https://github.com/Snicoalot/DSOR651-AlgorithmProject/assets/144690537/bd5e03ef-08e3-4f12-8b3f-e55e66411d49)
+
+From the image, we see some two player game (white nodes represent player 1, and gray nodes represent player 2) unfolding. In each node, we see a fraction where the numerator is the number of games won from that point moving forward and the denominator is the number of games *simulated* from that point forward. On the far left, under Selection, we see a bolded path from the root node to a gray leaf node with a 3/3 in it (again, meaning 3 games have been simulated from this node and that player 2 won each of those 3 games). The picture moves forward into an expansion, and creates a white node with a 0/0. This means this *would* be player 1's turn, but 0 games have been simulated or won from this point forward. The algorithm continues on to Simulation, where a nondescript number of games took place with random moves resulting in a loss for player 1 (shown by the 0/1). This is then backpropogated up the tree, updating the simulated results for all nodes in the path. Thus, all nodes in the path receive an increment in their demonitaor (for one extra simulation), and **only** the nodes in the path corresponding to player 2 (gray) receive an increment in their numerator (for one extra win). This iterative process takes place until a predefined ending criteria is met.
 
 ## Benchmark Results
 Comparison of efficiency and effectiveness 
