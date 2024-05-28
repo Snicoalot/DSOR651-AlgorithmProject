@@ -48,23 +48,46 @@ class Node:
                 self.children.append(new_node)
 
     def select(self):
-        total_visits = sum(child.visits for child in self.children)
-        if total_visits != 0:
-            log = math.log(total_visits)
-        else:
-            log = 0
         best_score = -99999
         best_child = None
         for child in self.children:
-            if child.visits == 0:
-                return child
-            # UCT Algorithm for determining best child
-                # Upper Confidence Bound for Trees
-            score = (child.wins / child.visits) + math.sqrt(2 * log / child.visits)
-            if score > best_score:
-                best_score = score
-                best_child = child
+            if child.visits > 0:
+                score = child.wins / child.visits
+                print(f"Best Score: ", best_score)
+                print(f"Score:  ", score)
+                if score > best_score:
+                    best_score = score
+                    best_child = child
+                    print(f"best child: ", best_child.board)
+            else:
+                if best_child == None:
+                    best_child = child
+
         return best_child
+
+
+        # total_visits = sum(child.visits for child in self.children)
+        # print(f"total visits: ", total_visits)
+        # if total_visits != 0:
+        #     log = math.log(total_visits)
+        # else:
+        #     log = 0
+        # best_score = -99999
+        # best_child = None
+        # for child in self.children:
+        #     if child.visits == 0:
+        #         score = -1
+        #     else:   
+        #     # UCT Algorithm for determining best child
+        #         # Upper Confidence Bound for Trees
+        #         score = (child.wins / child.visits) + math.sqrt(2 * log / child.visits)
+        #     print(f"Best Score: ", best_score)
+        #     print(f"Score:  ", score)
+        #     if score > best_score:
+        #         best_score = score
+        #         best_child = child
+        #         print(f"best child: ", best_child.board)
+        # return best_child
 
     def simulation(self):
         board = self.board.copy()
@@ -97,7 +120,7 @@ def checkWin(board, player):
 def mcts(board, player):
     root = Node(board, player)
     root.expand()
-    for _ in range(20000):
+    for _ in range(2000):
         node = root
         while node.children:
             node = node.select()
