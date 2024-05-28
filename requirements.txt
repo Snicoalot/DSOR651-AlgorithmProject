@@ -1,0 +1,10 @@
+# Make sure these are installed
+numpy
+random
+math
+
+unittest
+io
+sys
+
+mpi4py

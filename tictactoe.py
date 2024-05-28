@@ -26,6 +26,61 @@ class Node:
         for child in self.children:
             child.parent = self
 
+    # def update(self, result):
+    #     self.visits += 1
+    #     self.wins += result
+
+    # def backpropagate(self, node, result):
+    #     while node is not None:
+    #         node.update(result)
+    #         result = -result
+    #         node = node.parent
+
+    # Expand the tree to uncover new paths
+    def expand(self):
+        for i in range(9):
+            # Where any spot is available
+            if self.board[i] == 0:
+                # Make a new copy of the board where the AI plays that spot, append to the tree
+                new_board = self.board.copy()
+                new_board[i] = self.player
+                new_node = Node(new_board, -self.player)
+                self.children.append(new_node)
+
+    def select(self):
+        total_visits = sum(child.visits for child in self.children)
+        if total_visits != 0:
+            log = math.log(total_visits)
+        else:
+            log = 0
+        best_score = -99999
+        best_child = None
+        for child in self.children:
+            if child.visits == 0:
+                return child
+            # UCT Algorithm for determining best child
+                # Upper Confidence Bound for Trees
+            score = (child.wins / child.visits) + math.sqrt(2 * log / child.visits)
+            if score > best_score:
+                best_score = score
+                best_child = child
+        return best_child
+
+    def simulation(self):
+        board = self.board.copy()
+        player = self.player
+        while True:
+            
+            if 0 not in board:
+                return 0
+            empty_cells = [i for i in range(9) if board[i] == 0]
+            move = random.choice(empty_cells)
+            board[move] = player
+            if check_winner(board, player):
+                return player
+            player = -player
+
+
 def checkWin(board, player):
     # Define a list of winning gamestates
     winningPositions = [
@@ -39,6 +94,22 @@ def checkWin(board, player):
             return True
     return False
 
+def mcts(board, player):
+    root = Node(board, player)
+    root.expand()
+    for _ in range(20000):
+        node = root
+        while node.children:
+            node = node.select()
+            if not node.children:
+                node.expand()
+        result = node.simulation()
+        while node is not None:
+            node.visits += 1
+            if result == node.player:
+                node.wins += 1
+            node = node.parent
+    return max(root.children, key=lambda child: child.visits).board
 
 def playGame():
     # Intialize a new game and have the user select singleplayer or two player gamemode
@@ -70,9 +141,7 @@ def playGame():
                     board[move] = player
                 else:
                     # TODO: Change to MCTS algorithm taking a turn
-                    move = getMove(board)
-                    print(f"Player 2 chooses to move to {move}:")
-                    board[move] = player
+                    board = mcts(board, player)
                 if checkWin(board, player):
                     printBoard(board)
                     print(f"Player {'1' if player == 1 else '2'} wins the game!")
