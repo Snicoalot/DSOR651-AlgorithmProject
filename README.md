@@ -28,6 +28,7 @@ Single-Player Monte Carlo Tree Search is a variant of MCTS applied to single-pla
 
 ## Pseudocode
 Selection, Expansion, Simulation, Backpropogation
+
 There are two fundamental parts to the MCTS algorithm. The first part is understanding how the algorithm actually simulates future moves, and then uses those simulations to make good decisions. The process for this is Selection, Expansion, Simulation, and Backpropogation. The following image will be helpful in understanding:
 
 ![image](https://github.com/Snicoalot/DSOR651-AlgorithmProject/assets/144690537/74c948d4-4cb5-4876-823a-50a8a4912838)

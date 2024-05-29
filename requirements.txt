@@ -6,5 +6,6 @@ math
 unittest
 io
 sys
+multiprocessing
 
 mpi4py

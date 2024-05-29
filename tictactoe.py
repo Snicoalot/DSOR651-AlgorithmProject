@@ -5,6 +5,8 @@ This file contains the main code for tic tac toe.
 # Load necessary libraries
 import random
 import math
+import multiprocessing as mp
+import sys
 
 # Create a class to describe the contents of the objects that belong to it
     # For this game, we will treat a single instance of a tic tac toe boardgame as a single node, with future gameboards being
@@ -26,16 +28,6 @@ class Node:
         for child in self.children:
             child.parent = self
 
-    # def update(self, result):
-    #     self.visits += 1
-    #     self.wins += result
-
-    # def backpropagate(self, node, result):
-    #     while node is not None:
-    #         node.update(result)
-    #         result = -result
-    #         node = node.parent
-
     # Expand the tree to uncover new paths
     def expand(self):
         for i in range(9):
@@ -50,20 +42,22 @@ class Node:
 
     def select(self):
         best_score = -99999
-        best_child = None
+        best_child = self.children[0]
         for child in self.children:
-            if child.visits > 0:
-                score = child.wins / child.visits
-                print(f"Best Score: ", best_score)
-                print(f"Score:  ", score)
-                if score > best_score:
-                    best_score = score
-                    best_child = child
-                    print(f"NEW Best Score: ", best_score)
-                    print(f"best child: ", best_child.board)
-            else:
-                if child == self.children[-1]:
-                    best_child = child
+            # if child.visits > 0:
+            #     score = child.wins / child.visits
+            #     print(f"Best Score: ", best_score)
+            #     print(f"Score:  ", score)
+            #     if score > best_score:
+            #         best_score = score
+            #         best_child = child
+            #         print(f"NEW Best Score: ", best_score)
+            #         print(f"best child: ", best_child.board)
+            # else:
+            #     if child == self.children[-1]:
+            #         best_child = child
+            if child.wins > best_child.wins:
+                best_child = child
 
         return best_child
 
@@ -123,25 +117,33 @@ def mcts(board, player):
     root = Node(board, player)
     root.expand()
     for child in root.children:
-        for _ in range(2000):
+        for i in range(2000):
+            # Where I *would* put parellel processing, if I was good at coding
+            # Use parallel processing to simulate the results with multiple cores
+            # process = mp.Process(target=Node.simulation, args=(child, i))
+            # process.start()
+            # print(f"Completing process #{i} of 2000.")
+            
             node = child
+            
             result = node.simulation()
             switch = 0
             while switch == 0:
                 node.visits += 1
-                if result == node.player:
+                # if result == -node.player: # Checks for a winner, doesn't check for blocking opponent
+                #     node.wins += 1
+                if result == 0: # Checks for a tie, which subverts any strategy from opponent to force a tie!
                     node.wins += 1
-                elif result == -node.player:
-                    node.wins -= 1
                 if node.parent == None:
                     #child = node
                     switch = 1
                 else:
                     node = node.parent
+            #process.join()
         root.child = child
     node = root.select()
-    print(max(root.children, key=lambda child: child.wins/child.visits).board)
-    return max(root.children, key=lambda child: child.wins/child.visits).board
+    print(max(root.children, key=lambda child: child.wins).board)
+    return max(root.children, key=lambda child: child.wins).board
 
 
 # def mcts(board, player):
@@ -155,19 +157,19 @@ def mcts(board, player):
 #             switch = 0
 #             result = node.simulation()
 #             #while node is not None:
-            # while switch == 0:
-            #     node.visits += 1
-            #     if result == node.player:
-            #         node.wins += 1
-            #     if node.parent == None:
-            #         root = node
-            #         switch = 1
+#             while switch == 0:
+#                 node.visits += 1
+#                 if result == node.player:
+#                     node.wins += 1
+#                 if node.parent == None:
+#                     #root = node
+#                     switch = 1
 #                 else:
 #                     node = node.parent
 
 #             # if not node.children:
 #             #     node.expand()
-
+#             root.child = node
 #         #result = root.simulation()
 #         # while node is not None:
 #         #     node.visits += 1
