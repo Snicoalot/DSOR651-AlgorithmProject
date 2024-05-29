@@ -57,8 +57,12 @@ From the image, we see some two player game (white nodes represent player 1, and
 
 ## Benchmark Results
 Win metric only: Made mistakes after the second move
+
 Tie metric only: Only made mistakes
+
 Combination of Win and Tie metrics: Devious weapon, ties every game.
+
+Because the algorithm is inherently stochastic, it is difficult to get a baseline to compare it to. It would be more interesting if, now that it has been successfully adapted to tic tac toe, it could be generalized to play other games like checkers, chess, or Go.
 
 ## Lessons Learned
 My implementation of MCTS is flawed. When determining which course of action to take, the algorithm only looks at the number of random simulations that resulted in a win to determine where to play next. In reality, tic tac toe is an easy enough game that any sufficiently intelligent player should be able to end every game in a tie. Thus, the algorithm makes decisions in the moment without considering that its human opponent will block it if it gets too close to winning. 
