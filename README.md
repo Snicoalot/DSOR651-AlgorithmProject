@@ -46,7 +46,9 @@ Screenshots of actual code and explanation of how it works.
 
 ## Visualization or animation of algorithm steps or results
 To get a better idea on how MCTS works, watch these two video clips!
+
 https://youtube.com/clip/UgkxcLUTgE6jOOiOC8taLX54co23UHLOlci7?si=ZZ2-CMyxJMwW0I09
+
 https://youtube.com/clip/Ugkxe_k9BzKlb-T77BCq5N2m620UfasHR_G1?si=LRiWVclOpuVhw7K_
 
 An example iteration is provided here:
