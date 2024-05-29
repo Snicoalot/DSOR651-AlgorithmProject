@@ -1,12 +1,5 @@
 # Make sure these are installed
 numpy
-random
-math
-
-unittest
-io
-sys
-multiprocessing
 
 mpi4py
 coverage
