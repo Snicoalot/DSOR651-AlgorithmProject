@@ -9,3 +9,4 @@ sys
 multiprocessing
 
 mpi4py
+coverage
