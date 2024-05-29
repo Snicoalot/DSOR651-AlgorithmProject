@@ -46,7 +46,9 @@ Screenshots of actual code and explanation of how it works.
 
 ## Visualization or animation of algorithm steps or results
 To get a better idea on how MCTS works, watch these two video clips!
+
 https://youtube.com/clip/UgkxcLUTgE6jOOiOC8taLX54co23UHLOlci7?si=ZZ2-CMyxJMwW0I09
+
 https://youtube.com/clip/Ugkxe_k9BzKlb-T77BCq5N2m620UfasHR_G1?si=LRiWVclOpuVhw7K_
 
 An example iteration is provided here:
@@ -64,20 +66,52 @@ Combination of Win and Tie metrics: Devious weapon, ties every game.
 
 Because the algorithm is inherently stochastic, it is difficult to get a baseline to compare it to. It would be more interesting if, now that it has been successfully adapted to tic tac toe, it could be generalized to play other games like checkers, chess, or Go.
 
+However, the code was still adapted to make a 4x4 grid of tic tac toe, where the same rules for winning apply (any 3-long sequence of any one token). This makes it harder to strategize, especially since most people do not play tic tac toe on a 4x4 grid and thus are unaccustomed to the game. This puts the player and MCTS on the same starting point! Where before, I was able to tie every game easily, I now find myself struggling to consider future moves in a way that allows me to tie, much less win. To be honest, my very first time playing on the 4x4 grid with intention still resulted in a loss on my part! A screenshot of my loss is included here:
+
+![image](https://github.com/Snicoalot/DSOR651-AlgorithmProject/assets/144690537/d47eb714-4b5b-4925-b6a5-b628029bd1b7)
+
+
 ## Lessons Learned
-My implementation of MCTS is flawed. When determining which course of action to take, the algorithm only looks at the number of random simulations that resulted in a win to determine where to play next. In reality, tic tac toe is an easy enough game that any sufficiently intelligent player should be able to end every game in a tie. Thus, the algorithm makes decisions in the moment without considering that its human opponent will block it if it gets too close to winning. 
+My implementation of MCTS is flawed. When determining whether immediately to win a game or block the player, the algorithm will take the move that results in a block. This is likely due to my rewards function, which gives equal reward for tieing a game or winning a game. This means that there is hyperparameter tuning to be done in the background of MCTS to nudge it in the direction of always choosing winning vs winning and tieing. Originally, I had only included code to make the algorithm look for a win. This resulted in a garbage algorithm that never blocked me from winning! It was, however, consistent in the order of the moves it would play given my strategy used. I thought I would be sneaky and instead try to implement a solution that always forces a tie. After all, any two sufficiently experienced players should be able to tie every game. However, this produced an even worse algorithm that played erratically without any stable, consistent strategy at all. So I turned it off.
 
 ![image](https://github.com/Snicoalot/DSOR651-AlgorithmProject/assets/144690537/b1e32b73-cbef-4754-ae6d-24272af314a2)
 
-From this image, I tried an implementation where instead of looking for wins, it would look for a tie. After implementing it, I noticed that performance dropped drastically as the algorithm was no longer making moves that lead to a win (obviously). I tried many other implementations for creating a method for winning the game, but was unsuccessful until I took the time to write out by hand the steps I wanted my code to follow on pen and paper. This allowed me to build an intuition of how I wanted my code to flow from start to finish, and then allowed me to have a scaffold to work with for the remained of the project. This is a spectacular reminder that using online references is never the best strategy, and that our own brains are our best resource.
+I tried many other implementations for creating a method for winning the game, but was unsuccessful until I took the time to write out by hand the steps I wanted my code to follow on pen and paper. This allowed me to build an intuition of how I wanted my code to flow from start to finish, and then allowed me to have a scaffold to work with for the remained of the project. This is a spectacular reminder that using online references is never the best strategy, and that our own brains are our best resource.
 
 Additionally, the amount of publicly available documentation for adding multiprocessing to MCTS is incredibly low, with concrete examples of usage being even rarer. This made implementing multiprocessing very difficult, and I ultimately ran out of time to successfully incorporate it into my project. 
 
 
 ## Unit-testing strategy
-There are 10 functions in this algorithm. Of the 10, the initializer, chooseGame, checkWin, and printBoard functions were tested individually. 
-What steps of the algorithm were tested individually?
-Code-coverage measurement
+There are 10 functions in this algorithm. Of the 10, all functions except the main function are tested. The tested functions are: the initializer, expand, select, simulation, checkWin, mcts, chooseGame, getMove, and printBoard functions were tested individually. To implement the unit testing, an additional script, unit_tests.py, was created. The traditional approach of creating a unit test and running it to ensure it fails before fixing it was not implemented. Instead, the entire tictactoe.py script was created, and then unit tests were implemented to ensure that the code operated as expected.
+
+Additionally, after the code was finished, coverage.py was installed and used to get an understanding of the code coverage completed for this project. An image is included which shows that there is 78% code coverage. 
+
+![image](https://github.com/Snicoalot/DSOR651-AlgorithmProject/assets/144690537/91a865df-fc30-4184-883d-676bbe0f98dc)
+
+According to Microsoft.com, a minimum code coverage should be between 60% - 70%, and a decent testing code coverage should be between 70% - 80%, with anything above 80% being 'Overkill Test Coverage'. This means that the algorithm created has a good code coverage, and will likely not run into and major bugs or errors while running. As a matter of fact, no bugs can be reported at the time of publishing.
 
 ## Documentation
 All code here was produced by 2d Lt Nico De Ros without the use of external aid. Code examples from a variety of websites to include online journals, YouTube videos, and wikipedias were used, in addition to code previously created for other purposes (specifically unit testing from Databases and the Class and Node system from USAFA CS220). The source, https://repository.essex.ac.uk/4117/1/MCTS-Survey.pdf, was foundational to understanding this material.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
