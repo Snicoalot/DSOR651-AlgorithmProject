@@ -24,15 +24,76 @@ class TestFuncs(unittest.TestCase):
         self.assertEqual(root.wins, 0)
         self.assertIsNone(root.parent)
 
-    def test_chooseGame(self):
-        # Test for a correctly chosen game
-        game = 1
-        gamemode = tictactoe.chooseGame(game)
-        self.assertEqual(gamemode, 1)
+    def test_expand(self):
+        board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        player = 1
+        root = Node(board, player)
+        root.expand()
+        # Checking to make sure there are the correct amount of children, a player switch, and a correct board
+        self.assertEqual(len(root.children), 9)
+        self.assertEqual(root.children[0].board, [1, 0, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(root.children[1].board, [0, 1, 0, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(root.children[5].board, [0, 0, 0, 0, 0, 1, 0, 0, 0])
+        self.assertEqual(root.children[7].board, [0, 0, 0, 0, 0, 0, 0, 1, 0])
+        self.assertEqual(root.children[8].board, [0, 0, 0, 0, 0, 0, 0, 0, 1])
+        self.assertEqual(root.children[0].player, -1)
 
-        game = 2
-        gamemode = tictactoe.chooseGame(game)
-        self.assertEqual(gamemode, 2)
+        board = [0, 0, 1, -1, 0, 0, 0, 0, 1]
+        player = -1
+        root = Node(board, player)
+        root.expand()
+        # Checking to make sure there are the correct amount of children, a player switch, and a correct board
+        self.assertEqual(len(root.children), 6)
+        self.assertEqual(root.children[0].player, 1)
+        self.assertEqual(root.children[0].board, [-1, 0, 1, -1, 0, 0, 0, 0, 1])
+
+        board = [1, -1, 1, -1, 1, -1, 1, -1, 1]
+        player = -1
+        root = Node(board, player)
+        root.expand()
+        # Edge Case: Checking for no children, and an empty list for children
+        self.assertEqual(len(root.children), 0)
+        self.assertEqual(root.children, [])
+
+    def test_select(self):
+        board = [0, 0, 1, -1, 0, 0, 0, 0, 1]
+        player = -1
+        root = Node(board, player)
+        root.expand()
+        i = 0
+        # Create different score for each child node
+        for child in root.children:
+            child.wins = i
+            i = i + 1
+        # Test that the best node is the last node 
+        node = root.select()
+        self.assertEqual(node, root.children[-1])
+
+        i = 0
+        # Create different score for each child node
+        for child in root.children:
+            child.wins = 10 - i
+            i = i + 1
+        # Test that the best node is the first node 
+        node = root.select()
+        self.assertEqual(node, root.children[0])
+
+        i = 0
+        # Create different score for each child node
+        for child in root.children:
+            child.wins = 10 - i
+            i = i + 1
+            if child == root.children[3]:
+                child.wins = 50
+        # Test that the best node is the third node 
+        node = root.select()
+        self.assertEqual(node, root.children[3])
+
+    def test_simulation(self):
+        board = [0, 0, 1, -1, 0, 0, 0, 0, 1]
+        player = -1
+        root = Node(board, player)
+        
 
     def test_checkWin(self):
         # Test for a winning row
@@ -58,6 +119,16 @@ class TestFuncs(unittest.TestCase):
         player = -1
         result = tictactoe.checkWin(board, player)
         self.assertFalse(result)
+
+    def test_chooseGame(self):
+        # Test for a correctly chosen game
+        game = 1
+        gamemode = tictactoe.chooseGame(game)
+        self.assertEqual(gamemode, 1)
+
+        game = 2
+        gamemode = tictactoe.chooseGame(game)
+        self.assertEqual(gamemode, 2)
 
     # TODO: Find a way to test for an input
     # def test_getMove(self):
