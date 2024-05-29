@@ -65,6 +65,7 @@ Combination of Win and Tie metrics: Devious weapon, ties every game.
 Because the algorithm is inherently stochastic, it is difficult to get a baseline to compare it to. It would be more interesting if, now that it has been successfully adapted to tic tac toe, it could be generalized to play other games like checkers, chess, or Go.
 
 However, the code was still adapted to make a 4x4 grid of tic tac toe, where the same rules for winning apply (any 3-long sequence of any one token). This makes it harder to strategize, especially since most people do not play tic tac toe on a 4x4 grid and thus are unaccustomed to the game. This puts the player and MCTS on the same starting point! Where before, I was able to tie every game easily, I now find myself struggling to consider future moves in a way that allows me to tie, much less win. To be honest, my very first time playing on the 4x4 grid with intention still resulted in a loss on my part! A screenshot of my loss is included here:
+
 ![image](https://github.com/Snicoalot/DSOR651-AlgorithmProject/assets/144690537/d47eb714-4b5b-4925-b6a5-b628029bd1b7)
 
 
