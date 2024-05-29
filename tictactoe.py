@@ -1,5 +1,12 @@
 '''
 This file contains the main code for tic tac toe.
+
+There are 3 major hyperparameters that can be changed:
+    One is the number of simulations run per iteration of MCTS. This will be selected after running the script.
+    The other two are the rewards function for MCTS.
+        Ctrl + F 'TUNABLE HYPERPARAMETER' to find the hyperparameter section.
+        Currently, both increments are set to +1, but performance *could* be improved if the reward for winning
+        is greater than the reward for tieing a game.
 '''
 
 # Load necessary libraries
@@ -101,6 +108,11 @@ def mcts(board, player, sims):
             switch = 0
             while switch == 0:
                 node.visits += 1
+                # TUNABLE HYPERPARAMETER
+                # Change the value for incrementing node.wins for both the winner strategy and the tieing strategy.
+                # Default is +1 for both strategies, but performance could be improved if reward for winning is
+                # greater than the reward for tying. 
+
                 if result == -node.player: # Checks for a winner, doesn't check for blocking opponent
                     node.wins += 1
                 if result == 0: # Checks for a tie, which subverts any strategy from opponent to force a tie!
