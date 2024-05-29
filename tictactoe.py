@@ -103,8 +103,8 @@ def mcts(board, player, sims):
                 node.visits += 1
                 if result == -node.player: # Checks for a winner, doesn't check for blocking opponent
                     node.wins += 1
-                # if result == 0: # Checks for a tie, which subverts any strategy from opponent to force a tie!
-                #     node.wins += 1
+                if result == 0: # Checks for a tie, which subverts any strategy from opponent to force a tie!
+                    node.wins += 1
                 if node.parent == None:
                     #child = node
                     switch = 1

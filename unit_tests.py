@@ -24,6 +24,16 @@ class TestFuncs(unittest.TestCase):
         self.assertEqual(root.wins, 0)
         self.assertIsNone(root.parent)
 
+    def test_chooseGame(self):
+        # Test for a correctly chosen game
+        game = 1
+        gamemode = tictactoe.chooseGame(game)
+        self.assertEqual(gamemode, 1)
+
+        game = 2
+        gamemode = tictactoe.chooseGame(game)
+        self.assertEqual(gamemode, 2)
+
     def test_checkWin(self):
         # Test for a winning row
         board = [1, 1, 1, 0, 0, 0, 0, 0, 0]
