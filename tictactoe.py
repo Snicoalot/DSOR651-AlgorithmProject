@@ -41,60 +41,26 @@ class Node:
                 self.children.append(new_node)
 
     def select(self):
-        best_score = -99999
+        # Use the number of wins as a heuristic to pick the best node
         best_child = self.children[0]
         for child in self.children:
-            # if child.visits > 0:
-            #     score = child.wins / child.visits
-            #     print(f"Best Score: ", best_score)
-            #     print(f"Score:  ", score)
-            #     if score > best_score:
-            #         best_score = score
-            #         best_child = child
-            #         print(f"NEW Best Score: ", best_score)
-            #         print(f"best child: ", best_child.board)
-            # else:
-            #     if child == self.children[-1]:
-            #         best_child = child
             if child.wins > best_child.wins:
                 best_child = child
-
         return best_child
 
-
-        # total_visits = sum(child.visits for child in self.children)
-        # print(f"total visits: ", total_visits)
-        # if total_visits != 0:
-        #     log = math.log(total_visits)
-        # else:
-        #     log = 0
-        # best_score = -99999
-        # best_child = None
-        # for child in self.children:
-        #     if child.visits == 0:
-        #         score = -1
-        #     else:   
-        #     # UCT Algorithm for determining best child
-        #         # Upper Confidence Bound for Trees
-        #         score = (child.wins / child.visits) + math.sqrt(2 * log / child.visits)
-        #     print(f"Best Score: ", best_score)
-        #     print(f"Score:  ", score)
-        #     if score > best_score:
-        #         best_score = score
-        #         best_child = child
-        #         print(f"best child: ", best_child.board)
-        # return best_child
-
     def simulation(self):
+        # Simulate a game of random moves until a game ending state is reached
         board = self.board.copy()
         player = self.player
         while True:
-            
+            # Return a tie if no more possible moves exist
             if 0 not in board:
                 return 0
+            # Otherwise, randomly pick from empty cells
             empty_cells = [i for i in range(9) if board[i] == 0]
             move = random.choice(empty_cells)
             board[move] = player
+            # If there is a winner, stop. Otherwise, switch players.
             if checkWin(board, player):
                 return player
             player = -player
@@ -113,11 +79,16 @@ def checkWin(board, player):
             return True
     return False
 
-def mcts(board, player):
+def mcts(board, player, sims):
+    # Variation of MCTS. Perform Expand, Simulate, Backprop, then Select. As opposed to Selection first.
+
+    # Create a root node from the current board, and expand all possible leaf nodes as children
     root = Node(board, player)
     root.expand()
+
+    # For each child node, simulate 2000 games. This is a hyperparameter tunable by the user.
     for child in root.children:
-        for i in range(2000):
+        for i in range(sims):
             # Where I *would* put parellel processing, if I was good at coding
             # Use parallel processing to simulate the results with multiple cores
             # process = mp.Process(target=Node.simulation, args=(child, i))
@@ -130,10 +101,10 @@ def mcts(board, player):
             switch = 0
             while switch == 0:
                 node.visits += 1
-                # if result == -node.player: # Checks for a winner, doesn't check for blocking opponent
-                #     node.wins += 1
-                if result == 0: # Checks for a tie, which subverts any strategy from opponent to force a tie!
+                if result == -node.player: # Checks for a winner, doesn't check for blocking opponent
                     node.wins += 1
+                # if result == 0: # Checks for a tie, which subverts any strategy from opponent to force a tie!
+                #     node.wins += 1
                 if node.parent == None:
                     #child = node
                     switch = 1
@@ -142,42 +113,10 @@ def mcts(board, player):
             #process.join()
         root.child = child
     node = root.select()
-    print(max(root.children, key=lambda child: child.wins).board)
+
+    # Sanity Check the final selected node, return the child with the greatest number of wins
+    #print(max(root.children, key=lambda child: child.wins).board)
     return max(root.children, key=lambda child: child.wins).board
-
-
-# def mcts(board, player):
-#     root = Node(board, player)
-#     root.expand()
-#     for _ in range(2000):
-#         node = root
-#         while node.children:
-#             node = node.select()
-
-#             switch = 0
-#             result = node.simulation()
-#             #while node is not None:
-#             while switch == 0:
-#                 node.visits += 1
-#                 if result == node.player:
-#                     node.wins += 1
-#                 if node.parent == None:
-#                     #root = node
-#                     switch = 1
-#                 else:
-#                     node = node.parent
-
-#             # if not node.children:
-#             #     node.expand()
-#             root.child = node
-#         #result = root.simulation()
-#         # while node is not None:
-#         #     node.visits += 1
-#         #     if result == node.player:
-#         #         node.wins += 1
-#         #     node = node.parent
-#     print(max(root.children, key=lambda child: child.wins/child.visits).board)
-#     return max(root.children, key=lambda child: child.wins/child.visits).board
 
 def playGame():
     # Intialize a new game and have the user select singleplayer or two player gamemode
@@ -200,21 +139,42 @@ def playGame():
 
     # Code for singleplayer gamemode (MCTS)
     if gamemode == 1:
+        gamemode = 0
+        sims = -1
+        # Collect user input for hyperparameter for the number of iterations run per simulation
+        print(f"How many simulations would you like to run for each MCTS iteration? (Recommend at least 1000) ")
+        while gamemode == 0:
+            sims = input("")
+            # Will not accept non-integer numbers, or numbers in illegal placements
+            try:
+                sims = int(sims)
+                if isinstance(sims, int):
+                    if sims > 0:
+                        gamemode = chooseGame(1)
+                        print(f"Running each simulation for {sims} iterations! Good luck!")
+                    else:
+                        print("Please enter a positive number.")
+            except:  
+                print("Invalid. Try again.")
         while True:
+            # Player and MCTS take turns.
             for player in players:
                 printBoard(board)
                 if player == 1:
+                    # When its the players turn, prompt for a legal move
                     move = getMove(board)
                     print(f"Player 1 chooses to move to {move}:")
                     board[move] = player
                 else:
-                    # TODO: Change to MCTS algorithm taking a turn
-                    board = mcts(board, player)
+                    # MCTS will play based on the algorithm
+                    board = mcts(board, player, sims)
                 if checkWin(board, player):
+                    # If there is a winner, stop the game
                     printBoard(board)
                     print(f"Player {'1' if player == 1 else '2'} wins the game!")
                     return
                 if 0 not in board:
+                    # If there are no more moves to be made, declare a tie
                     printBoard(board)
                     print("It's a tie!")
                     return
@@ -222,6 +182,7 @@ def playGame():
     # Code for two player gamemode (classic)
     elif gamemode == 2:
         while True:
+            # Players take turns playing tic tac toe. Self explanatory.
             for player in players:
                 printBoard(board)
                 if player == 1:
@@ -242,6 +203,7 @@ def playGame():
                     return
 
 def chooseGame(gamemode):
+    # Choose 1 for playing against MCTS, choose 2 for playing against a human friend
     if gamemode == 1:
         return 1
     else:
@@ -269,5 +231,6 @@ def printBoard(board):
         print(f" {' '.join(['X' if board[j] == 1 else ('O' if board[j] == -1 else '_') for j in range(i, i+3)])}")
     print("\n")
 
+# Play the game
 if __name__ == "__main__":
     playGame()
