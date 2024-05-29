@@ -45,6 +45,7 @@ class Node:
                 new_board = self.board.copy()
                 new_board[i] = self.player
                 new_node = Node(new_board, -self.player)
+                new_node.parent = self
                 self.children.append(new_node)
 
     def select(self):
@@ -58,9 +59,10 @@ class Node:
                 if score > best_score:
                     best_score = score
                     best_child = child
+                    print(f"NEW Best Score: ", best_score)
                     print(f"best child: ", best_child.board)
             else:
-                if best_child == None:
+                if child == self.children[-1]:
                     best_child = child
 
         return best_child
@@ -99,7 +101,7 @@ class Node:
             empty_cells = [i for i in range(9) if board[i] == 0]
             move = random.choice(empty_cells)
             board[move] = player
-            if check_winner(board, player):
+            if checkWin(board, player):
                 return player
             player = -player
 
@@ -120,19 +122,60 @@ def checkWin(board, player):
 def mcts(board, player):
     root = Node(board, player)
     root.expand()
-    for _ in range(2000):
-        node = root
-        while node.children:
-            node = node.select()
-            if not node.children:
-                node.expand()
-        result = node.simulation()
-        while node is not None:
-            node.visits += 1
-            if result == node.player:
-                node.wins += 1
-            node = node.parent
-    return max(root.children, key=lambda child: child.visits).board
+    for child in root.children:
+        for _ in range(2000):
+            node = child
+            result = node.simulation()
+            switch = 0
+            while switch == 0:
+                node.visits += 1
+                if result == node.player:
+                    node.wins += 1
+                elif result == -node.player:
+                    node.wins -= 1
+                if node.parent == None:
+                    #child = node
+                    switch = 1
+                else:
+                    node = node.parent
+        root.child = child
+    node = root.select()
+    print(max(root.children, key=lambda child: child.wins/child.visits).board)
+    return max(root.children, key=lambda child: child.wins/child.visits).board
+
+
+# def mcts(board, player):
+#     root = Node(board, player)
+#     root.expand()
+#     for _ in range(2000):
+#         node = root
+#         while node.children:
+#             node = node.select()
+
+#             switch = 0
+#             result = node.simulation()
+#             #while node is not None:
+            # while switch == 0:
+            #     node.visits += 1
+            #     if result == node.player:
+            #         node.wins += 1
+            #     if node.parent == None:
+            #         root = node
+            #         switch = 1
+#                 else:
+#                     node = node.parent
+
+#             # if not node.children:
+#             #     node.expand()
+
+#         #result = root.simulation()
+#         # while node is not None:
+#         #     node.visits += 1
+#         #     if result == node.player:
+#         #         node.wins += 1
+#         #     node = node.parent
+#     print(max(root.children, key=lambda child: child.wins/child.visits).board)
+#     return max(root.children, key=lambda child: child.wins/child.visits).board
 
 def playGame():
     # Intialize a new game and have the user select singleplayer or two player gamemode
